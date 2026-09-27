@@ -1,0 +1,36 @@
+{
+  "name": "portfolio",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.15.0",
+  "engines": {
+    "node": ">=20.11"
+  },
+  "scripts": {
+    "dev": "concurrently -k -n shared,api,admin,web -c magenta,cyan,yellow,green \"pnpm -F @portfolio/shared dev\" \"pnpm -F @portfolio/api dev\" \"pnpm -F @portfolio/admin dev\" \"pnpm -F @portfolio/web dev\"",
+    "build": "pnpm -F @portfolio/shared build && pnpm -F @portfolio/api build && pnpm -F @portfolio/admin build && pnpm -F @portfolio/web build",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -F @portfolio/api test",
+    "db:up": "docker compose up -d",
+    "db:down": "docker compose down",
+    "db:reset": "pnpm -F @portfolio/api db:reset",
+    "migrate": "pnpm -F @portfolio/api migrate",
+    "seed": "pnpm -F @portfolio/api seed",
+    "studio": "pnpm -F @portfolio/api studio"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.33.0",
+    "concurrently": "^9.2.0",
+    "eslint": "^9.33.0",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.6.2",
+    "prettier-plugin-tailwindcss": "^0.6.14",
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.39.0"
+  }
+}
