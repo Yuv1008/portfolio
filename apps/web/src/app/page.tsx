@@ -1,50 +1,141 @@
-const apiUrl = process.env['API_URL'] ?? 'http://localhost:4000'
-
-interface Health {
-  status: string
-  db: string
-  uptime: number
-}
-
-/**
- * Phase 1 placeholder. Fetching /health from a server component proves the web
- * app can reach the API; phase 7 replaces this with the real home page and the
- * typed client in lib/api.
- */
-async function getHealth(): Promise<Health | null> {
-  try {
-    const res = await fetch(`${apiUrl}/health`, { cache: 'no-store' })
-    if (!res.ok) return null
-    return (await res.json()) as Health
-  } catch {
-    return null
-  }
-}
+import Link from 'next/link'
+import Image from 'next/image'
+import {
+  getAbout,
+  getExperience,
+  getFeaturedProjects,
+  getServices,
+  getSkills,
+  getTestimonials,
+} from '@/lib/api'
+import cloudinaryLoader from '@/lib/cloudinary'
+import { Section } from '@/components/Section'
+import { ProjectCard } from '@/components/ProjectCard'
+import { SkillGrid } from '@/components/SkillGrid'
+import { Timeline } from '@/components/Timeline'
+import { Testimonials } from '@/components/Testimonials'
+import { ServiceList } from '@/components/ServiceList'
 
 export default async function Home() {
-  const health = await getHealth()
+  // One round of parallel reads rather than a waterfall down the page.
+  const [about, projects, skills, experience, testimonials, services] = await Promise.all([
+    getAbout(),
+    getFeaturedProjects(),
+    getSkills(),
+    getExperience(),
+    getTestimonials(),
+    getServices(),
+  ])
 
   return (
-    <main className="mx-auto flex max-w-2xl flex-1 flex-col justify-center gap-5 px-6 py-16">
-      <p className="text-xs font-medium uppercase tracking-widest text-neutral-500">Phase 1</p>
-      <h1 className="text-balance text-4xl font-semibold tracking-tight sm:text-5xl">
-        Portfolio, with a CMS built from scratch
-      </h1>
-      <p className="text-lg text-neutral-600 dark:text-neutral-400">
-        Scaffold only. The hero, projects, blog and everything else arrive in phase 7.
-      </p>
-      <dl className="mt-2 rounded-lg border border-neutral-200 p-4 text-sm dark:border-neutral-800">
-        <dt className="font-medium">API health</dt>
-        <dd className="mt-1 text-neutral-600 dark:text-neutral-400">
-          {health ? (
-            <>
-              {health.status} · db {health.db} · up {health.uptime}s
-            </>
-          ) : (
-            <>Could not reach {apiUrl}</>
-          )}
-        </dd>
-      </dl>
-    </main>
+    <>
+      <section className="flex flex-col-reverse items-start gap-8 sm:flex-row sm:items-center sm:justify-between">
+        <div className="max-w-2xl">
+          <h1 className="text-balance text-4xl font-semibold tracking-tight sm:text-5xl">
+            {about?.name ?? 'Portfolio'}
+          </h1>
+          <p className="mt-4 text-balance text-lg leading-relaxed text-[var(--color-muted)]">
+            {about?.headline ?? 'Set up your About record in the admin panel.'}
+          </p>
+          {about?.location ? (
+            <p className="mt-2 text-sm text-[var(--color-muted)]">{about.location}</p>
+          ) : null}
+
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Link
+              href="/projects"
+              className="rounded-md bg-[var(--color-accent)] px-4 py-2 text-sm font-medium text-white transition hover:opacity-90"
+            >
+              See my work
+            </Link>
+            <Link
+              href="/contact"
+              className="rounded-md border border-[var(--color-border)] px-4 py-2 text-sm font-medium transition hover:bg-[var(--color-surface)]"
+            >
+              Get in touch
+            </Link>
+            {about?.resumeUrl ? (
+              <a
+                href={about.resumeUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-md border border-[var(--color-border)] px-4 py-2 text-sm font-medium transition hover:bg-[var(--color-surface)]"
+              >
+                Résumé
+              </a>
+            ) : null}
+          </div>
+        </div>
+
+        {about?.avatarUrl ? (
+          <Image
+            loader={cloudinaryLoader}
+            src={about.avatarUrl}
+            alt={about.name}
+            width={120}
+            height={120}
+            className="size-28 shrink-0 rounded-full border border-[var(--color-border)] object-cover sm:size-32"
+            priority
+          />
+        ) : null}
+      </section>
+
+      {projects.length > 0 ? (
+        <Section
+          title="Featured work"
+          description="A few things I have built."
+          action={
+            <Link href="/projects" className="text-sm text-[var(--color-accent)] hover:underline">
+              All projects
+            </Link>
+          }
+        >
+          <div className="grid gap-5 sm:grid-cols-2">
+            {projects.map((project) => (
+              <ProjectCard key={project.id} project={project} />
+            ))}
+          </div>
+        </Section>
+      ) : null}
+
+      {skills.length > 0 ? (
+        <Section title="Skills" description="What I reach for.">
+          <SkillGrid skills={skills} />
+        </Section>
+      ) : null}
+
+      {experience.length > 0 ? (
+        <Section title="Experience">
+          <Timeline roles={experience} />
+        </Section>
+      ) : null}
+
+      {services.length > 0 ? (
+        <Section title="What I can help with">
+          <ServiceList services={services} />
+        </Section>
+      ) : null}
+
+      {testimonials.length > 0 ? (
+        <Section title="Kind words">
+          <Testimonials testimonials={testimonials} />
+        </Section>
+      ) : null}
+
+      <Section title="Let's build something">
+        <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-8 text-center">
+          <p className="text-lg font-medium tracking-tight">Have a project in mind?</p>
+          <p className="mx-auto mt-2 max-w-md text-sm text-[var(--color-muted)]">
+            I am open to freelance work and interesting conversations.
+          </p>
+          <Link
+            href="/contact"
+            className="mt-6 inline-block rounded-md bg-[var(--color-accent)] px-4 py-2 text-sm font-medium text-white transition hover:opacity-90"
+          >
+            Start a conversation
+          </Link>
+        </div>
+      </Section>
+    </>
   )
 }
