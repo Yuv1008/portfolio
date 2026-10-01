@@ -2,7 +2,7 @@ import { afterAll, beforeEach, describe, expect, it } from 'vitest'
 import request from 'supertest'
 import { prisma } from '../prisma.js'
 import { resetRateLimits } from '../middleware/rateLimit.js'
-import { app, createAdmin, disconnect, resetDb, testAdmin } from './helpers.js'
+import { app, createAdmin, disconnect, loginForToken, resetDb } from './helpers.js'
 
 let token = ''
 
@@ -24,10 +24,7 @@ beforeEach(async () => {
   await resetDb()
   resetRateLimits()
   await createAdmin()
-  const res = await request(app)
-    .post('/auth/login')
-    .send({ email: testAdmin.email, password: testAdmin.password })
-  token = res.body.accessToken
+  token = await loginForToken()
 })
 
 afterAll(async () => {

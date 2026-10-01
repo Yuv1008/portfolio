@@ -1,5 +1,5 @@
 import type { Express } from 'express'
-import type { Response } from 'supertest'
+import request, { type Response } from 'supertest'
 import { createApp } from '../app.js'
 import { prisma } from '../prisma.js'
 import { hashPassword } from '../lib/password.js'
@@ -41,6 +41,28 @@ export const refreshCookieHeader = (res: Response): string | undefined => {
   const header = res.headers['set-cookie']
   const cookies = Array.isArray(header) ? header : header ? [header] : []
   return cookies.find((c) => c.startsWith(`${REFRESH_COOKIE}=`))
+}
+
+/**
+ * Logs in and returns the access token, failing loudly if login did not
+ * succeed. Without this, a rate-limited or rejected login in beforeEach left
+ * `token` undefined and every later assertion failed with a bare 401, which
+ * points at the wrong line entirely.
+ */
+export const loginForToken = async (
+  email = testAdmin.email,
+  password = testAdmin.password,
+): Promise<string> => {
+  const res = await request(app).post('/auth/login').send({ email, password })
+
+  if (res.status !== 200 || typeof res.body?.accessToken !== 'string') {
+    throw new Error(
+      `Test setup could not log in: ${res.status} ${JSON.stringify(res.body)}. ` +
+        'A 429 here means the login rate limiter was not reset between tests.',
+    )
+  }
+
+  return res.body.accessToken
 }
 
 export const disconnect = async (): Promise<void> => {
