@@ -1,55 +1,72 @@
-import { useEffect, useState } from 'react'
+import { lazy, Suspense } from 'react'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { QueryClientProvider } from '@tanstack/react-query'
+import { queryClient } from './lib/queryClient'
+import { AuthProvider } from './lib/auth-context'
+import { ToastProvider } from './components/Toast'
+import { ProtectedRoute } from './components/ProtectedRoute'
+import { Layout } from './components/Layout'
+import { FullPageSpinner } from './components/Skeleton'
+import { EmptyState } from './components/EmptyState'
 
-const apiUrl = import.meta.env['VITE_API_URL'] ?? 'http://localhost:4000'
+const Login = lazy(() => import('./pages/Login'))
+const Dashboard = lazy(() => import('./pages/Dashboard'))
 
-interface Health {
-  status: string
-  db: string
-  uptime: number
-}
+/** Stands in for the pages phase 6 builds, so every nav link resolves. */
+const ComingSoon = ({ title }: { title: string }) => (
+  <div className="space-y-6">
+    <h1 className="text-xl font-semibold tracking-tight">{title}</h1>
+    <EmptyState
+      title={`${title} arrives in phase 6`}
+      description="The API behind it is already live."
+    />
+  </div>
+)
 
-/**
- * Phase 1 placeholder. It calls /health so the scaffold proves the admin can
- * reach the API through CORS; phase 5 replaces this with the real router.
- */
+const PLACEHOLDER_ROUTES = [
+  ['about', 'About'],
+  ['skills', 'Skills'],
+  ['projects', 'Projects'],
+  ['blogs', 'Blog'],
+  ['experience', 'Experience'],
+  ['testimonials', 'Testimonials'],
+  ['services', 'Services'],
+  ['media', 'Media'],
+  ['messages', 'Messages'],
+] as const
+
 export default function App() {
-  const [health, setHealth] = useState<Health | null>(null)
-  const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    const controller = new AbortController()
-    fetch(`${apiUrl}/health`, { signal: controller.signal })
-      .then((res) =>
-        res.ok ? (res.json() as Promise<Health>) : Promise.reject(new Error(String(res.status))),
-      )
-      .then(setHealth)
-      .catch((err: unknown) => {
-        if (err instanceof Error && err.name !== 'AbortError') setError(err.message)
-      })
-    return () => controller.abort()
-  }, [])
-
   return (
-    <main className="mx-auto flex min-h-dvh max-w-xl flex-col justify-center gap-4 px-6">
-      <p className="text-xs font-medium uppercase tracking-widest text-neutral-500">Phase 1</p>
-      <h1 className="text-3xl font-semibold tracking-tight">Portfolio admin</h1>
-      <p className="text-neutral-600 dark:text-neutral-400">
-        Scaffold only. The login screen, layout and dashboard arrive in phase 5.
-      </p>
-      <div className="rounded-lg border border-neutral-200 p-4 text-sm dark:border-neutral-800">
-        <p className="font-medium">API health</p>
-        {health ? (
-          <p className="mt-1 text-neutral-600 dark:text-neutral-400">
-            {health.status} · db {health.db} · up {health.uptime}s
-          </p>
-        ) : error ? (
-          <p className="mt-1 text-red-600">
-            Could not reach {apiUrl}: {error}
-          </p>
-        ) : (
-          <p className="mt-1 text-neutral-500">checking…</p>
-        )}
-      </div>
-    </main>
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <AuthProvider>
+          <ToastProvider>
+            <Suspense fallback={<FullPageSpinner />}>
+              <Routes>
+                <Route path="/login" element={<Login />} />
+
+                <Route element={<ProtectedRoute />}>
+                  <Route element={<Layout />}>
+                    <Route index element={<Dashboard />} />
+                    {PLACEHOLDER_ROUTES.map(([path, label]) => (
+                      <Route key={path} path={path} element={<ComingSoon title={label} />} />
+                    ))}
+                    <Route
+                      path="*"
+                      element={
+                        <EmptyState
+                          title="Page not found"
+                          description="That route does not exist."
+                        />
+                      }
+                    />
+                  </Route>
+                </Route>
+              </Routes>
+            </Suspense>
+          </ToastProvider>
+        </AuthProvider>
+      </BrowserRouter>
+    </QueryClientProvider>
   )
 }

@@ -5,6 +5,7 @@ import { aboutRouter } from './about.js'
 import { contentRouter } from './content.js'
 import { mediaRouter } from './media.js'
 import { contactRouter } from './contact.js'
+import { statsRouter } from './stats.js'
 
 /** Every route the API serves is mounted here. */
 export const routes: Router = Router()
@@ -15,3 +16,4 @@ routes.use(aboutRouter)
 routes.use(contentRouter)
 routes.use(mediaRouter)
 routes.use(contactRouter)
+routes.use(statsRouter)

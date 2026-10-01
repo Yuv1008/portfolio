@@ -8,6 +8,7 @@
     "node": ">=20.11"
   },
   "scripts": {
+    "predev": "pnpm -F @portfolio/shared build",
     "dev": "concurrently -k -n shared,api,admin,web -c magenta,cyan,yellow,green \"pnpm -F @portfolio/shared dev\" \"pnpm -F @portfolio/api dev\" \"pnpm -F @portfolio/admin dev\" \"pnpm -F @portfolio/web dev\"",
     "build": "pnpm -F @portfolio/shared build && pnpm -F @portfolio/api build && pnpm -F @portfolio/admin build && pnpm -F @portfolio/web build",
     "lint": "eslint .",
