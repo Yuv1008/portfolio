@@ -15,6 +15,7 @@ import { SkillGrid } from '@/components/SkillGrid'
 import { Timeline } from '@/components/Timeline'
 import { Testimonials } from '@/components/Testimonials'
 import { ServiceList } from '@/components/ServiceList'
+import { Reveal } from '@/components/Reveal'
 
 export default async function Home() {
   // One round of parallel reads rather than a waterfall down the page.
@@ -44,7 +45,7 @@ export default async function Home() {
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
               href="/projects"
-              className="rounded-md bg-[var(--color-accent)] px-4 py-2 text-sm font-medium text-white transition hover:opacity-90"
+              className="rounded-md bg-[var(--color-accent)] px-4 py-2 text-sm font-medium text-[var(--color-on-accent)] transition hover:opacity-90"
             >
               See my work
             </Link>
@@ -81,61 +82,73 @@ export default async function Home() {
       </section>
 
       {projects.length > 0 ? (
-        <Section
-          title="Featured work"
-          description="A few things I have built."
-          action={
-            <Link href="/projects" className="text-sm text-[var(--color-accent)] hover:underline">
-              All projects
-            </Link>
-          }
-        >
-          <div className="grid gap-5 sm:grid-cols-2">
-            {projects.map((project) => (
-              <ProjectCard key={project.id} project={project} />
-            ))}
-          </div>
-        </Section>
+        <Reveal>
+          <Section
+            title="Featured work"
+            description="A few things I have built."
+            action={
+              <Link href="/projects" className="text-sm text-[var(--color-accent)] hover:underline">
+                All projects
+              </Link>
+            }
+          >
+            <div className="grid gap-5 sm:grid-cols-2">
+              {projects.map((project) => (
+                <ProjectCard key={project.id} project={project} />
+              ))}
+            </div>
+          </Section>
+        </Reveal>
       ) : null}
 
       {skills.length > 0 ? (
-        <Section title="Skills" description="What I reach for.">
-          <SkillGrid skills={skills} />
-        </Section>
+        <Reveal>
+          <Section title="Skills" description="What I reach for.">
+            <SkillGrid skills={skills} />
+          </Section>
+        </Reveal>
       ) : null}
 
       {experience.length > 0 ? (
-        <Section title="Experience">
-          <Timeline roles={experience} />
-        </Section>
+        <Reveal>
+          <Section title="Experience">
+            <Timeline roles={experience} />
+          </Section>
+        </Reveal>
       ) : null}
 
       {services.length > 0 ? (
-        <Section title="What I can help with">
-          <ServiceList services={services} />
-        </Section>
+        <Reveal>
+          <Section title="What I can help with">
+            <ServiceList services={services} />
+          </Section>
+        </Reveal>
       ) : null}
 
       {testimonials.length > 0 ? (
-        <Section title="Kind words">
-          <Testimonials testimonials={testimonials} />
-        </Section>
+        <Reveal>
+          <Section title="Kind words">
+            <Testimonials testimonials={testimonials} />
+          </Section>
+        </Reveal>
       ) : null}
 
-      <Section title="Let's build something">
-        <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-8 text-center">
-          <p className="text-lg font-medium tracking-tight">Have a project in mind?</p>
-          <p className="mx-auto mt-2 max-w-md text-sm text-[var(--color-muted)]">
-            I am open to freelance work and interesting conversations.
-          </p>
-          <Link
-            href="/contact"
-            className="mt-6 inline-block rounded-md bg-[var(--color-accent)] px-4 py-2 text-sm font-medium text-white transition hover:opacity-90"
-          >
-            Start a conversation
-          </Link>
-        </div>
-      </Section>
+      <Reveal>
+        <Section title="Let's build something">
+          <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-8 text-center">
+            <p className="text-lg font-medium tracking-tight">Have a project in mind?</p>
+            <p className="mx-auto mt-2 max-w-md text-sm text-[var(--color-muted)]">
+              I am open to freelance work and interesting conversations.
+            </p>
+            <Link
+              href="/contact"
+              className="mt-6 inline-block rounded-md bg-[var(--color-accent)] px-4 py-2 text-sm font-medium text-[var(--color-on-accent)] transition hover:opacity-90"
+            >
+              Start a conversation
+            </Link>
+          </div>
+        </Section>
+      </Reveal>
     </>
   )
 }

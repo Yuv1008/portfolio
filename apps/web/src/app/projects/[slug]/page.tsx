@@ -5,6 +5,9 @@ import { notFound } from 'next/navigation'
 import { getProject, getProjects } from '@/lib/api'
 import cloudinaryLoader from '@/lib/cloudinary'
 import { Prose } from '@/components/Markdown'
+import { JsonLd, breadcrumbSchema } from '@/components/JsonLd'
+
+const SITE = process.env['NEXT_PUBLIC_SITE_URL'] ?? 'http://localhost:3010'
 
 export async function generateStaticParams() {
   const projects = await getProjects()
@@ -21,6 +24,7 @@ export async function generateMetadata({
   return {
     title: project.title,
     description: project.summary,
+    alternates: { canonical: `/projects/${project.slug}` },
     openGraph: {
       title: project.title,
       description: project.summary,
@@ -38,6 +42,13 @@ export default async function ProjectPage({ params }: PageProps<'/projects/[slug
 
   return (
     <article className="mx-auto max-w-2xl">
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: 'Home', url: SITE },
+          { name: 'Projects', url: `${SITE}/projects` },
+          { name: project.title, url: `${SITE}/projects/${project.slug}` },
+        ])}
+      />
       <Link href="/projects" className="text-sm text-[var(--color-muted)] hover:underline">
         ← All projects
       </Link>

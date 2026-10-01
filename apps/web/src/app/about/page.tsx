@@ -11,6 +11,7 @@ import { Timeline } from '@/components/Timeline'
 export async function generateMetadata(): Promise<Metadata> {
   const about = await getAbout()
   return {
+    alternates: { canonical: '/about' },
     title: 'About',
     description: about?.headline ?? 'About me',
   }

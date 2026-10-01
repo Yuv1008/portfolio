@@ -11,8 +11,11 @@
   --color-border: oklch(0.9 0.005 265);
   --color-fg: oklch(0.22 0.01 265);
   --color-muted: oklch(0.52 0.012 265);
-  --color-accent: oklch(0.55 0.19 264);
+  /* Dark enough that white text on it clears 4.5:1. */
+  --color-accent: oklch(0.48 0.18 264);
   --color-accent-soft: oklch(0.95 0.03 264);
+  /* Text drawn on an accent background. */
+  --color-on-accent: oklch(1 0 0);
 
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
@@ -24,8 +27,10 @@
   --color-border: oklch(0.28 0.012 265);
   --color-fg: oklch(0.96 0.004 265);
   --color-muted: oklch(0.68 0.012 265);
-  --color-accent: oklch(0.7 0.16 264);
+  /* Light accent reads better on a dark ground, so its text goes dark. */
+  --color-accent: oklch(0.72 0.15 264);
   --color-accent-soft: oklch(0.28 0.06 264);
+  --color-on-accent: oklch(0.18 0.02 265);
 }
 
 html {

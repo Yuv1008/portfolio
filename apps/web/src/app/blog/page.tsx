@@ -4,6 +4,7 @@ import { getPosts } from '@/lib/api'
 import { fullDate, readingTime } from '@/lib/format'
 
 export const metadata: Metadata = {
+  alternates: { canonical: '/blog' },
   title: 'Blog',
   description: 'Notes on building things.',
 }

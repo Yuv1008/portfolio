@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
+import { ThemeToggle } from './ThemeToggle'
 
 const LINKS = [
   { href: '/projects', label: 'Projects' },
@@ -35,19 +36,23 @@ export const Nav = ({ name }: { name: string }) => {
               {link.label}
             </Link>
           ))}
+          <ThemeToggle />
         </nav>
 
-        <button
-          type="button"
-          aria-expanded={open}
-          aria-controls="mobile-nav"
-          onClick={() => {
-            setOpen((v) => !v)
-          }}
-          className="rounded-md border border-[var(--color-border)] px-2.5 py-1 text-sm sm:hidden"
-        >
-          {open ? 'Close' : 'Menu'}
-        </button>
+        <div className="flex items-center gap-2 sm:hidden">
+          <ThemeToggle />
+          <button
+            type="button"
+            aria-expanded={open}
+            aria-controls="mobile-nav"
+            onClick={() => {
+              setOpen((v) => !v)
+            }}
+            className="rounded-md border border-[var(--color-border)] px-2.5 py-1 text-sm"
+          >
+            {open ? 'Close' : 'Menu'}
+          </button>
+        </div>
       </div>
 
       {open ? (

@@ -1,9 +1,11 @@
 import type { Metadata } from 'next'
 import { getAbout } from '@/lib/api'
+import { ContactForm } from '@/components/ContactForm'
 
 export const metadata: Metadata = {
   title: 'Contact',
-  description: 'Get in touch.',
+  description: 'Get in touch about a project, a role, or anything else.',
+  alternates: { canonical: '/contact' },
 }
 
 export default async function ContactPage() {
@@ -16,13 +18,12 @@ export default async function ContactPage() {
         Tell me about your project, or just say hello.
       </p>
 
-      {/* Phase 8 replaces this with the live, validated form. */}
-      <p className="mt-10 rounded-xl border border-dashed border-[var(--color-border)] px-6 py-12 text-center text-sm text-[var(--color-muted)]">
-        The contact form arrives in phase 8. The API endpoint behind it is already live.
-      </p>
+      <div className="mt-10">
+        <ContactForm />
+      </div>
 
       {about?.socials && Object.keys(about.socials).length > 0 ? (
-        <div className="mt-8">
+        <div className="mt-12 border-t border-[var(--color-border)] pt-6">
           <h2 className="text-sm font-medium">Elsewhere</h2>
           <ul className="mt-3 flex flex-wrap gap-4">
             {Object.entries(about.socials).map(([label, href]) => (

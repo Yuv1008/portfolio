@@ -111,6 +111,24 @@ export const getPosts = (page = 1, limit = 20) =>
 export const getPost = (slug: string) =>
   optional(`/blogs/${encodeURIComponent(slug)}`, blogSchema, { tag: TAGS.blogs })
 
+/**
+ * Every published post, for the sitemap and generateStaticParams.
+ * The API caps `limit` at 100, so asking for more is a 400 rather than a
+ * bigger page — this walks the pages instead of silently truncating.
+ */
+export const getAllPosts = async () => {
+  const PAGE_SIZE = 100
+  const first = await getPosts(1, PAGE_SIZE)
+  const rest = []
+
+  for (let page = 2; page <= first.pages; page += 1) {
+    const next = await getPosts(page, PAGE_SIZE)
+    rest.push(...next.items)
+  }
+
+  return [...first.items, ...rest]
+}
+
 export const getExperience = () =>
   request('/experience', z.array(experienceSchema), { tag: TAGS.experience })
 

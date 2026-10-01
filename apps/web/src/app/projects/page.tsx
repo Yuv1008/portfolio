@@ -3,6 +3,7 @@ import { getProjects } from '@/lib/api'
 import { ProjectCard } from '@/components/ProjectCard'
 
 export const metadata: Metadata = {
+  alternates: { canonical: '/projects' },
   title: 'Projects',
   description: 'Things I have designed and built.',
 }
@@ -24,7 +25,7 @@ export default async function ProjectsPage() {
       ) : (
         <div className="mt-10 grid gap-5 sm:grid-cols-2">
           {projects.map((project) => (
-            <ProjectCard key={project.id} project={project} />
+            <ProjectCard key={project.id} project={project} headingLevel={2} />
           ))}
         </div>
       )}
