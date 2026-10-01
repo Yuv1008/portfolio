@@ -19,7 +19,11 @@ const envSchema = z.object({
   WEB_URL: z.string().url('WEB_URL must be a full URL'),
 
   JWT_SECRET: z.string().min(32, 'JWT_SECRET must be at least 32 characters'),
-  ACCESS_TOKEN_TTL: z.string().default('15m'),
+  // A duration jsonwebtoken understands, e.g. 15m, 2h, 7d.
+  ACCESS_TOKEN_TTL: z
+    .string()
+    .regex(/^\d+(ms|s|m|h|d)$/, 'ACCESS_TOKEN_TTL must look like 15m, 2h or 7d')
+    .default('15m'),
   REFRESH_TOKEN_TTL_DAYS: z.coerce.number().int().min(1).max(90).default(7),
   COOKIE_SAMESITE: z.enum(['lax', 'strict', 'none']).default('lax'),
 

@@ -28,7 +28,7 @@ export default tseslint.config(
     },
   },
   {
-    files: ['**/*.test.ts', '**/*.config.*', '**/prisma/seed.ts'],
+    files: ['**/tests/**', '**/*.test.ts', '**/*.config.*', '**/prisma/seed.ts'],
     rules: { 'no-console': 'off' },
   },
   prettier,
