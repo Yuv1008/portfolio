@@ -33,3 +33,56 @@ body {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Markdown preview. Scoped so it cannot leak into the admin chrome. */
+.prose-admin h1,
+.prose-admin h2,
+.prose-admin h3 {
+  @apply mb-2 mt-4 font-semibold text-neutral-100 first:mt-0;
+}
+.prose-admin h1 {
+  @apply text-lg;
+}
+.prose-admin h2 {
+  @apply text-base;
+}
+.prose-admin h3 {
+  @apply text-sm;
+}
+.prose-admin p {
+  @apply my-2 leading-relaxed;
+}
+.prose-admin ul {
+  @apply my-2 list-disc space-y-1 pl-5;
+}
+.prose-admin ol {
+  @apply my-2 list-decimal space-y-1 pl-5;
+}
+.prose-admin a {
+  @apply text-accent underline underline-offset-2;
+}
+.prose-admin code {
+  @apply rounded bg-neutral-800 px-1 py-0.5 font-mono text-xs;
+}
+.prose-admin pre {
+  @apply my-3 overflow-x-auto rounded-lg bg-neutral-900 p-3;
+}
+.prose-admin pre code {
+  @apply bg-transparent p-0;
+}
+.prose-admin blockquote {
+  @apply my-3 border-l-2 border-neutral-700 pl-3 text-neutral-400;
+}
+.prose-admin table {
+  @apply my-3 w-full border-collapse text-left;
+}
+.prose-admin th,
+.prose-admin td {
+  @apply border-b border-neutral-800 px-2 py-1.5;
+}
+.prose-admin img {
+  @apply my-3 max-w-full rounded-lg;
+}
+.prose-admin hr {
+  @apply my-4 border-neutral-800;
+}

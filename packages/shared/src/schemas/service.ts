@@ -1,9 +1,10 @@
 import { z } from 'zod'
+import { optionalText } from '../common.js'
 
 export const serviceCreateSchema = z.object({
   title: z.string().trim().min(1, 'Title is required').max(120),
   description: z.string().trim().min(1, 'Description is required').max(1000),
-  icon: z.string().trim().max(80).nullable().optional(),
+  icon: optionalText(80),
   order: z.coerce.number().int().min(0).default(0),
 })
 

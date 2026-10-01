@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { markdownSchema, optionalUrl } from '../common.js'
+import { markdownSchema, optionalText, optionalUrl } from '../common.js'
 
 export const socialsSchema = z.record(z.string(), z.string().url('Each social must be a URL'))
 
@@ -10,7 +10,7 @@ export const aboutUpdateSchema = z.object({
   avatarUrl: optionalUrl,
   resumeUrl: optionalUrl,
   socials: socialsSchema.default({}),
-  location: z.string().trim().max(120).nullable().optional(),
+  location: optionalText(120),
 })
 
 export const aboutSchema = aboutUpdateSchema.extend({

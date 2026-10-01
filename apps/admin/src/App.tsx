@@ -11,29 +11,15 @@ import { EmptyState } from './components/EmptyState'
 
 const Login = lazy(() => import('./pages/Login'))
 const Dashboard = lazy(() => import('./pages/Dashboard'))
-
-/** Stands in for the pages phase 6 builds, so every nav link resolves. */
-const ComingSoon = ({ title }: { title: string }) => (
-  <div className="space-y-6">
-    <h1 className="text-xl font-semibold tracking-tight">{title}</h1>
-    <EmptyState
-      title={`${title} arrives in phase 6`}
-      description="The API behind it is already live."
-    />
-  </div>
-)
-
-const PLACEHOLDER_ROUTES = [
-  ['about', 'About'],
-  ['skills', 'Skills'],
-  ['projects', 'Projects'],
-  ['blogs', 'Blog'],
-  ['experience', 'Experience'],
-  ['testimonials', 'Testimonials'],
-  ['services', 'Services'],
-  ['media', 'Media'],
-  ['messages', 'Messages'],
-] as const
+const About = lazy(() => import('./pages/About'))
+const Skills = lazy(() => import('./pages/Skills'))
+const Projects = lazy(() => import('./pages/Projects'))
+const Blogs = lazy(() => import('./pages/Blogs'))
+const Experience = lazy(() => import('./pages/Experience'))
+const Testimonials = lazy(() => import('./pages/Testimonials'))
+const Services = lazy(() => import('./pages/Services'))
+const Media = lazy(() => import('./pages/Media'))
+const Messages = lazy(() => import('./pages/Messages'))
 
 export default function App() {
   return (
@@ -48,9 +34,15 @@ export default function App() {
                 <Route element={<ProtectedRoute />}>
                   <Route element={<Layout />}>
                     <Route index element={<Dashboard />} />
-                    {PLACEHOLDER_ROUTES.map(([path, label]) => (
-                      <Route key={path} path={path} element={<ComingSoon title={label} />} />
-                    ))}
+                    <Route path="about" element={<About />} />
+                    <Route path="skills" element={<Skills />} />
+                    <Route path="projects" element={<Projects />} />
+                    <Route path="blogs" element={<Blogs />} />
+                    <Route path="experience" element={<Experience />} />
+                    <Route path="testimonials" element={<Testimonials />} />
+                    <Route path="services" element={<Services />} />
+                    <Route path="media" element={<Media />} />
+                    <Route path="messages" element={<Messages />} />
                     <Route
                       path="*"
                       element={

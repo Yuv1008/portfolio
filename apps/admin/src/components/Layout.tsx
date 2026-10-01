@@ -9,8 +9,8 @@ import { Sidebar } from './Sidebar'
 const useUnreadCount = () =>
   useQuery({
     queryKey: ['messages', 'unread-count'],
-    queryFn: async () => {
-      const res = await api.get<{ unread: number }>('/admin/messages/unread-count')
+    queryFn: async ({ signal }) => {
+      const res = await api.get<{ unread: number }>('/admin/messages/unread-count', { signal })
       return res.data.unread
     },
     // The badge should not be stale for long, but it is not worth a poll.

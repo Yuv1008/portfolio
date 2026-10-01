@@ -22,8 +22,8 @@ const formatDate = (value: string | Date): string =>
 export default function Dashboard() {
   const { data, isPending, error, refetch } = useQuery({
     queryKey: ['stats'],
-    queryFn: async () => {
-      const res = await api.get<Stats>('/admin/stats')
+    queryFn: async ({ signal }) => {
+      const res = await api.get<Stats>('/admin/stats', { signal })
       return res.data
     },
   })

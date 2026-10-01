@@ -1,10 +1,11 @@
 import { z } from 'zod'
+import { optionalText } from '../common.js'
 
 export const skillCreateSchema = z.object({
   name: z.string().trim().min(1, 'Name is required').max(80),
   category: z.string().trim().min(1, 'Category is required').max(80),
   level: z.coerce.number().int().min(1, 'Level runs 1 to 5').max(5),
-  icon: z.string().trim().max(80).nullable().optional(),
+  icon: optionalText(80),
   order: z.coerce.number().int().min(0).default(0),
 })
 

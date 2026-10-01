@@ -43,13 +43,24 @@ export const reorderSchema = z.object({
     .min(1, 'Send at least one item'),
 })
 
-export const optionalUrl = z
-  .string()
-  .trim()
-  .url('Must be a valid URL')
-  .max(2048)
-  .nullable()
-  .optional()
+/**
+ * An optional URL, as a form can actually express it.
+ *
+ * A cleared <input> yields "", never null, and "" is not a valid URL — so
+ * without this preprocess, leaving an optional field blank made the whole form
+ * unsubmittable. Empty becomes null, which is what the column stores.
+ */
+export const optionalUrl = z.preprocess(
+  (value) => (typeof value === 'string' && value.trim() === '' ? null : value),
+  z.string().trim().url('Must be a valid URL').max(2048).nullable().optional(),
+)
+
+/** Same reasoning as optionalUrl: a cleared input stores null, not "". */
+export const optionalText = (max: number) =>
+  z.preprocess(
+    (value) => (typeof value === 'string' && value.trim() === '' ? null : value),
+    z.string().trim().max(max).nullable().optional(),
+  )
 
 export const markdownSchema = z.string().min(1, 'Content is required')
 
