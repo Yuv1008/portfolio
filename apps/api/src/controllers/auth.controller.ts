@@ -2,7 +2,7 @@ import type { CookieOptions, RequestHandler, Response } from 'express'
 import { loginSchema } from '@portfolio/shared'
 import { env, isProduction } from '../env.js'
 import { notFound, unauthorized } from '../lib/errors.js'
-import { wrap } from '../lib/asyncHandler.js'
+import { withBody, wrap } from '../lib/asyncHandler.js'
 import { requireUser } from '../middleware/auth.js'
 import * as authService from '../services/auth.service.js'
 
@@ -29,13 +29,15 @@ const clearRefreshCookie = (res: Response): void => {
   res.clearCookie(REFRESH_COOKIE, cookieOptions())
 }
 
-export const postLogin: RequestHandler = wrap(async (req, res) => {
-  const { email, password } = loginSchema.parse(req.body)
-  const session = await authService.login(email, password)
+export const postLogin: RequestHandler = withBody(
+  loginSchema,
+  async ({ email, password }, _req, res) => {
+    const session = await authService.login(email, password)
 
-  setRefreshCookie(res, session.refreshToken, session.refreshExpiresAt)
-  res.status(200).json({ accessToken: session.accessToken, user: session.user })
-})
+    setRefreshCookie(res, session.refreshToken, session.refreshExpiresAt)
+    res.status(200).json({ accessToken: session.accessToken, user: session.user })
+  },
+)
 
 export const postRefresh: RequestHandler = wrap(async (req, res) => {
   const raw: unknown = req.cookies[REFRESH_COOKIE]
