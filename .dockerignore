@@ -1,0 +1,23 @@
+# Keep the build context small and secrets out of it.
+**/node_modules
+**/dist
+**/.next
+**/coverage
+**/.turbo
+
+**/.env
+**/.env.*
+!**/.env.example
+
+.git
+.github
+.vscode
+**/*.log
+
+# The API image needs neither front end.
+apps/admin
+apps/web
+
+# Tests and local tooling do not belong in the image.
+apps/api/src/tests
+**/*.test.ts

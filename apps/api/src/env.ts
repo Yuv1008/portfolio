@@ -1,7 +1,20 @@
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { config } from 'dotenv'
 import { z } from 'zod'
 
-config()
+/**
+ * dotenv resolves a bare `.env` against the process working directory, so
+ * `node apps/api/dist/index.js` from the repo root — which is how CI and some
+ * process managers start it — would find nothing and exit as unconfigured.
+ * Resolving from this file instead makes the lookup independent of where the
+ * process was launched. It works from both src/ and dist/, since each is one
+ * level below the package root.
+ */
+const packageRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
+
+// Real environment variables always win; the file only fills the gaps.
+config({ path: path.join(packageRoot, '.env') })
 
 /**
  * Core variables are required: the process exits rather than booting half-configured.

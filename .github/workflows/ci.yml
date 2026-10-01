@@ -1,0 +1,134 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# A new push to the same branch cancels the run already in flight.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Lint, typecheck, test, build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: portfolio
+          POSTGRES_PASSWORD: portfolio
+          POSTGRES_DB: portfolio
+        ports:
+          - 5434:5432
+        # Steps must not start before the database accepts connections.
+        options: >-
+          --health-cmd "pg_isready -U portfolio"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      # The API test suite reads apps/api/.env.test, written below.
+      DATABASE_URL: postgresql://portfolio:portfolio@localhost:5434/portfolio_test?schema=public
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.15.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      # Everything else imports the built package, so it comes first.
+      - name: Build shared
+        run: pnpm --filter @portfolio/shared build
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Write the API test environment
+        run: |
+          cat > apps/api/.env.test <<'ENV'
+          DATABASE_URL="postgresql://portfolio:portfolio@localhost:5434/portfolio_test?schema=public"
+          NODE_ENV=test
+          PORT=4100
+          ADMIN_URL=http://localhost:5180
+          WEB_URL=http://localhost:3010
+          JWT_SECRET=ci-secret-not-used-anywhere-else-0123456789
+          COOKIE_SAMESITE=lax
+          ADMIN_EMAIL=admin@test.local
+          ADMIN_PASSWORD=test-password-123
+          ENV
+
+      # Global setup creates and migrates portfolio_test on first run.
+      - name: Test
+        run: pnpm --filter @portfolio/api test
+
+      # The web build prerenders pages by reading the API, so CI has to run one.
+      # Without this the build fails on the first fetch, exactly as it would if
+      # the API were down during a real deploy.
+      - name: Prepare the development database
+        run: |
+          cat > apps/api/.env <<'ENV'
+          DATABASE_URL="postgresql://portfolio:portfolio@localhost:5434/portfolio?schema=public"
+          NODE_ENV=development
+          PORT=4000
+          ADMIN_URL=http://localhost:5180
+          WEB_URL=http://localhost:3010
+          JWT_SECRET=ci-secret-not-used-anywhere-else-0123456789
+          COOKIE_SAMESITE=lax
+          ADMIN_EMAIL=admin@ci.local
+          ADMIN_PASSWORD=ci-password-123
+          LOG_LEVEL=warn
+          ENV
+          pnpm --filter @portfolio/api exec prisma migrate deploy
+          pnpm --filter @portfolio/api seed
+
+      # The API runs and the build happens in one step on purpose: a process
+      # backgrounded in an earlier step is not guaranteed to still be alive in
+      # a later one, and the build fails with ECONNREFUSED when it is not.
+      - name: Build
+        env:
+          API_URL: http://localhost:4000
+          NEXT_PUBLIC_API_URL: http://localhost:4000
+          NEXT_PUBLIC_SITE_URL: http://localhost:3010
+        run: |
+          pnpm --filter @portfolio/api build
+          node apps/api/dist/index.js &
+          api_pid=$!
+          trap 'kill $api_pid 2>/dev/null || true' EXIT
+          timeout 60 bash -c 'until curl -sf http://localhost:4000/health >/dev/null; do sleep 1; done'
+          pnpm build
+
+  docker:
+    name: API image builds
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Build the API image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: apps/api/Dockerfile
+          push: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
