@@ -2,14 +2,12 @@
 
 A personal portfolio whose content is managed by a CMS built from scratch — no Strapi, no Sanity, no Contentful. A Node API owns the data, a React admin panel edits it, and a Next.js site renders it and updates within a second of a save, without a rebuild.
 
-[![CI](https://github.com/USERNAME/portfolio/actions/workflows/ci.yml/badge.svg)](https://github.com/USERNAME/portfolio/actions/workflows/ci.yml)
+[![CI](https://github.com/Yuv1008/portfolio/actions/workflows/ci.yml/badge.svg)](https://github.com/Yuv1008/portfolio/actions/workflows/ci.yml)
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6)
 ![Postgres](https://img.shields.io/badge/PostgreSQL-16-336791)
 ![Licence](https://img.shields.io/badge/licence-MIT-black)
 
 **Live site** · _add your URL_  **Admin** · _add your URL_
-
-> Replace `USERNAME` in the badge URLs once the repository has a remote.
 
 ---
 
