@@ -11,6 +11,7 @@ export const experienceCreateSchema = z
     current: z.boolean().default(false),
     description: markdownSchema,
     order: z.coerce.number().int().min(0).default(0),
+    published: z.boolean().default(true),
   })
   .refine((v) => v.current || v.endDate != null, {
     message: 'Give an end date, or mark the role as current',
@@ -32,6 +33,7 @@ export const experienceUpdateSchema = z
     current: z.boolean(),
     description: markdownSchema,
     order: z.coerce.number().int().min(0),
+    published: z.boolean(),
   })
   .partial()
 
@@ -45,6 +47,7 @@ export const experienceSchema = z.object({
   current: z.boolean(),
   description: z.string(),
   order: z.number().int(),
+  published: z.boolean(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
 })

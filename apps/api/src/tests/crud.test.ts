@@ -248,16 +248,45 @@ describe('pagination and search on blogs', () => {
   })
 })
 
-describe('resources with no published column', () => {
-  it('returns every skill publicly, since Skill has no published field', async () => {
-    await request(app)
-      .post('/admin/skills')
-      .set(auth())
-      .send({ name: 'TypeScript', category: 'Languages', level: 5, order: 0 })
+describe('published filtering on every resource', () => {
+  const samples: [string, Record<string, unknown>][] = [
+    ['skills', { name: 'TypeScript', category: 'Languages', level: 5, order: 0 }],
+    [
+      'experience',
+      {
+        company: 'Acme',
+        role: 'Engineer',
+        location: 'Remote',
+        startDate: '2025-01-01',
+        current: true,
+        description: 'Did things.',
+        order: 0,
+      },
+    ],
+    ['services', { title: 'Consulting', description: 'Advice.', order: 0 }],
+  ]
 
-    const res = await request(app).get('/skills')
+  it.each(samples)('defaults %s to published, so nothing disappears', async (resource, body) => {
+    const created = await request(app).post(`/admin/${resource}`).set(auth()).send(body)
+    expect(created.status).toBe(201)
+    expect(created.body.published).toBe(true)
+
+    const res = await request(app).get(`/${resource}`)
     expect(res.status).toBe(200)
     expect(res.body).toHaveLength(1)
+  })
+
+  it.each(samples)('hides unpublished %s from the public list', async (resource, body) => {
+    const created = await request(app)
+      .post(`/admin/${resource}`)
+      .set(auth())
+      .send({ ...body, published: false })
+    expect(created.status).toBe(201)
+
+    expect((await request(app).get(`/${resource}`)).body).toHaveLength(0)
+    // Still visible to the admin, which is the whole point of the flag.
+    expect((await request(app).get(`/admin/${resource}`).set(auth())).body).toHaveLength(1)
+    expect((await request(app).get(`/${resource}/${created.body.id}`)).status).toBe(404)
   })
 })
 

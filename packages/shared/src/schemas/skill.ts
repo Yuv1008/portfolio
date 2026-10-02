@@ -7,6 +7,7 @@ export const skillCreateSchema = z.object({
   level: z.coerce.number().int().min(1, 'Level runs 1 to 5').max(5),
   icon: optionalText(80),
   order: z.coerce.number().int().min(0).default(0),
+  published: z.boolean().default(true),
 })
 
 export const skillUpdateSchema = skillCreateSchema.partial()

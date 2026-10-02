@@ -7,7 +7,7 @@ A personal portfolio whose content is managed by a CMS built from scratch — no
 ![Postgres](https://img.shields.io/badge/PostgreSQL-16-336791)
 ![Licence](https://img.shields.io/badge/licence-MIT-black)
 
-**Live site** · _add your URL_  **Admin** · _add your URL_
+**Live site** · _add your URL_ **Admin** · _add your URL_
 
 ---
 
@@ -82,18 +82,18 @@ sequenceDiagram
 
 ## Stack
 
-| Layer | Choice | Why |
-| --- | --- | --- |
-| Monorepo | pnpm workspaces | One `zod` schema package imported by all three apps, with no publish step |
-| API | Express 4 + TypeScript | Small surface, explicit middleware order |
-| Database | PostgreSQL 16 + Prisma | Typed queries and a migration history |
-| Validation | zod | The same schema validates the request, drives the admin form and parses the response |
-| Admin | React 19, Vite, TanStack Query | One table and one form render every content type |
-| Site | Next.js 16 App Router | Server components and tagged caching give static speed with live content |
-| Styling | Tailwind 4 | CSS-first tokens, so dark mode is a variable swap |
-| Media | Cloudinary | The database stores a URL; images are resized at the CDN |
-| Email | Resend | Contact notifications |
-| Tests | Vitest + Supertest | 61 tests over the HTTP surface, not the internals |
+| Layer      | Choice                         | Why                                                                                  |
+| ---------- | ------------------------------ | ------------------------------------------------------------------------------------ |
+| Monorepo   | pnpm workspaces                | One `zod` schema package imported by all three apps, with no publish step            |
+| API        | Express 4 + TypeScript         | Small surface, explicit middleware order                                             |
+| Database   | PostgreSQL 16 + Prisma         | Typed queries and a migration history                                                |
+| Validation | zod                            | The same schema validates the request, drives the admin form and parses the response |
+| Admin      | React 19, Vite, TanStack Query | One table and one form render every content type                                     |
+| Site       | Next.js 16 App Router          | Server components and tagged caching give static speed with live content             |
+| Styling    | Tailwind 4                     | CSS-first tokens, so dark mode is a variable swap                                    |
+| Media      | Cloudinary                     | The database stores a URL; images are resized at the CDN                             |
+| Email      | Resend                         | Contact notifications                                                                |
+| Tests      | Vitest + Supertest             | 61 tests over the HTTP surface, not the internals                                    |
 
 ---
 
@@ -143,11 +143,11 @@ sequenceDiagram
    pnpm dev
    ```
 
-   | | |
-   | --- | --- |
-   | Site | http://localhost:3010 |
+   |       |                       |
+   | ----- | --------------------- |
+   | Site  | http://localhost:3010 |
    | Admin | http://localhost:5180 |
-   | API | http://localhost:4000 |
+   | API   | http://localhost:4000 |
 
    Those ports are deliberate: 3000 and 5173 collide with too much else.
 
@@ -166,42 +166,42 @@ Uploads and contact email need accounts. Without them the API still runs: an upl
 
 ### `apps/api/.env`
 
-| Variable | Required | Purpose |
-| --- | --- | --- |
-| `DATABASE_URL` | yes | Postgres connection string |
-| `ADMIN_URL` | yes | Admin origin. CORS allows this and `WEB_URL`, nothing else |
-| `WEB_URL` | yes | Site origin, and where revalidation requests are sent |
-| `JWT_SECRET` | yes | Signs access tokens. 32 characters minimum |
-| `ADMIN_EMAIL` | yes | Seeded admin account |
-| `ADMIN_PASSWORD` | yes | Seeded admin password |
-| `NODE_ENV` | no | `development` by default |
-| `PORT` | no | `4000` |
-| `ACCESS_TOKEN_TTL` | no | `15m`. Validated as a duration at boot |
-| `REFRESH_TOKEN_TTL_DAYS` | no | `7` |
-| `COOKIE_SAMESITE` | no | `lax` locally; `none` in production, where the admin is on another domain |
-| `LOG_LEVEL` | no | `info` |
-| `CLOUDINARY_CLOUD_NAME` | no | Uploads return 503 without the three Cloudinary values |
-| `CLOUDINARY_API_KEY` | no | |
-| `CLOUDINARY_API_SECRET` | no | |
-| `RESEND_API_KEY` | no | Contact mail is skipped without it; the message is still saved |
-| `RESEND_FROM` | no | `Portfolio <onboarding@resend.dev>` |
-| `OWNER_EMAIL` | no | Where contact notifications go |
-| `REVALIDATE_SECRET` | no | Must match the site's value, or revalidation is skipped |
+| Variable                 | Required | Purpose                                                                   |
+| ------------------------ | -------- | ------------------------------------------------------------------------- |
+| `DATABASE_URL`           | yes      | Postgres connection string                                                |
+| `ADMIN_URL`              | yes      | Admin origin. CORS allows this and `WEB_URL`, nothing else                |
+| `WEB_URL`                | yes      | Site origin, and where revalidation requests are sent                     |
+| `JWT_SECRET`             | yes      | Signs access tokens. 32 characters minimum                                |
+| `ADMIN_EMAIL`            | yes      | Seeded admin account                                                      |
+| `ADMIN_PASSWORD`         | yes      | Seeded admin password                                                     |
+| `NODE_ENV`               | no       | `development` by default                                                  |
+| `PORT`                   | no       | `4000`                                                                    |
+| `ACCESS_TOKEN_TTL`       | no       | `15m`. Validated as a duration at boot                                    |
+| `REFRESH_TOKEN_TTL_DAYS` | no       | `7`                                                                       |
+| `COOKIE_SAMESITE`        | no       | `lax` locally; `none` in production, where the admin is on another domain |
+| `LOG_LEVEL`              | no       | `info`                                                                    |
+| `CLOUDINARY_CLOUD_NAME`  | no       | Uploads return 503 without the three Cloudinary values                    |
+| `CLOUDINARY_API_KEY`     | no       |                                                                           |
+| `CLOUDINARY_API_SECRET`  | no       |                                                                           |
+| `RESEND_API_KEY`         | no       | Contact mail is skipped without it; the message is still saved            |
+| `RESEND_FROM`            | no       | `Portfolio <onboarding@resend.dev>`                                       |
+| `OWNER_EMAIL`            | no       | Where contact notifications go                                            |
+| `REVALIDATE_SECRET`      | no       | Must match the site's value, or revalidation is skipped                   |
 
 ### `apps/admin/.env`
 
-| Variable | Required | Purpose |
-| --- | --- | --- |
-| `VITE_API_URL` | yes | API base URL. Inlined into the bundle, so never a secret |
+| Variable       | Required | Purpose                                                  |
+| -------------- | -------- | -------------------------------------------------------- |
+| `VITE_API_URL` | yes      | API base URL. Inlined into the bundle, so never a secret |
 
 ### `apps/web/.env.local`
 
-| Variable | Required | Purpose |
-| --- | --- | --- |
-| `API_URL` | yes | Server-side only: where the Next server reads content from |
-| `NEXT_PUBLIC_API_URL` | yes | The contact form posts from the browser |
-| `NEXT_PUBLIC_SITE_URL` | yes | Canonical URLs, Open Graph and the sitemap |
-| `REVALIDATE_SECRET` | yes | Must match the API's value |
+| Variable               | Required | Purpose                                                    |
+| ---------------------- | -------- | ---------------------------------------------------------- |
+| `API_URL`              | yes      | Server-side only: where the Next server reads content from |
+| `NEXT_PUBLIC_API_URL`  | yes      | The contact form posts from the browser                    |
+| `NEXT_PUBLIC_SITE_URL` | yes      | Canonical URLs, Open Graph and the sitemap                 |
+| `REVALIDATE_SECRET`    | yes      | Must match the API's value                                 |
 
 ---
 
@@ -213,45 +213,45 @@ Public routes need no auth. Admin routes require `Authorization: Bearer <access 
 
 ### Auth
 
-| Method | Path | Auth | Purpose |
-| --- | --- | --- | --- |
-| `POST` | `/auth/login` | — | Access token in the body, refresh token in an httpOnly cookie. 5 attempts per 15 min per IP |
-| `POST` | `/auth/refresh` | cookie | Rotates the refresh token and revokes the old one |
-| `POST` | `/auth/logout` | cookie | Revokes the token and clears the cookie |
-| `GET` | `/auth/me` | bearer | The signed-in admin |
+| Method | Path            | Auth   | Purpose                                                                                     |
+| ------ | --------------- | ------ | ------------------------------------------------------------------------------------------- |
+| `POST` | `/auth/login`   | —      | Access token in the body, refresh token in an httpOnly cookie. 5 attempts per 15 min per IP |
+| `POST` | `/auth/refresh` | cookie | Rotates the refresh token and revokes the old one                                           |
+| `POST` | `/auth/logout`  | cookie | Revokes the token and clears the cookie                                                     |
+| `GET`  | `/auth/me`      | bearer | The signed-in admin                                                                         |
 
 ### Content
 
-| Method | Path | Auth | Purpose |
-| --- | --- | --- | --- |
-| `GET` | `/:resource` | — | Published rows only, sorted. `?page`, `?limit`, `?q` |
-| `GET` | `/:resource/:idOrSlug` | — | One row. Unpublished is indistinguishable from missing |
-| `GET` | `/about` | — | The About singleton |
-| `PUT` | `/about` | bearer | Creates or updates it |
-| `GET` | `/admin/:resource` | bearer | Includes drafts. `?published=true\|false\|all` |
-| `GET` | `/admin/:resource/:id` | bearer | One row, published or not |
-| `POST` | `/admin/:resource` | bearer | Create. Duplicate slug returns 409 |
-| `PUT` | `/admin/:resource/:id` | bearer | Replace |
-| `PATCH` | `/admin/:resource/:id` | bearer | Partial update |
-| `PATCH` | `/admin/:resource/reorder` | bearer | `{ items: [{ id, order }] }`, applied in one transaction |
-| `DELETE` | `/admin/:resource/:id` | bearer | Delete |
+| Method   | Path                       | Auth   | Purpose                                                  |
+| -------- | -------------------------- | ------ | -------------------------------------------------------- |
+| `GET`    | `/:resource`               | —      | Published rows only, sorted. `?page`, `?limit`, `?q`     |
+| `GET`    | `/:resource/:idOrSlug`     | —      | One row. Unpublished is indistinguishable from missing   |
+| `GET`    | `/about`                   | —      | The About singleton                                      |
+| `PUT`    | `/about`                   | bearer | Creates or updates it                                    |
+| `GET`    | `/admin/:resource`         | bearer | Includes drafts. `?published=true\|false\|all`           |
+| `GET`    | `/admin/:resource/:id`     | bearer | One row, published or not                                |
+| `POST`   | `/admin/:resource`         | bearer | Create. Duplicate slug returns 409                       |
+| `PUT`    | `/admin/:resource/:id`     | bearer | Replace                                                  |
+| `PATCH`  | `/admin/:resource/:id`     | bearer | Partial update                                           |
+| `PATCH`  | `/admin/:resource/reorder` | bearer | `{ items: [{ id, order }] }`, applied in one transaction |
+| `DELETE` | `/admin/:resource/:id`     | bearer | Delete                                                   |
 
-Blogs paginate and sort newest first; they have no `order` column. Skills, experience and services have no `published` column, so their public lists return every row. Reorder exists for every resource except blogs.
+Every resource has a `published` flag, so every public list shows published rows only. Blogs paginate and sort newest first, since they have no `order` column; reorder exists for the other five.
 
 ### Media, contact and the rest
 
-| Method | Path | Auth | Purpose |
-| --- | --- | --- | --- |
-| `POST` | `/admin/upload` | bearer | One image to Cloudinary. Images only, 5 MB cap |
-| `GET` | `/admin/media` | bearer | Paginated, newest first |
-| `DELETE` | `/admin/media/:id` | bearer | Removes the Cloudinary asset, then the row |
-| `POST` | `/contact` | — | Validated, honeypot, 3 per hour per IP |
-| `GET` | `/admin/messages` | bearer | `?page`, `?limit`, `?q` across name, email, subject, body |
-| `GET` | `/admin/messages/unread-count` | bearer | For the dashboard badge |
-| `PATCH` | `/admin/messages/:id/read` | bearer | `{ read: boolean }` |
-| `DELETE` | `/admin/messages/:id` | bearer | Delete |
-| `GET` | `/admin/stats` | bearer | Every dashboard count in one request |
-| `GET` | `/health` | — | `200` with `db: "up"`, `503` when the database is unreachable |
+| Method   | Path                           | Auth   | Purpose                                                       |
+| -------- | ------------------------------ | ------ | ------------------------------------------------------------- |
+| `POST`   | `/admin/upload`                | bearer | One image to Cloudinary. Images only, 5 MB cap                |
+| `GET`    | `/admin/media`                 | bearer | Paginated, newest first                                       |
+| `DELETE` | `/admin/media/:id`             | bearer | Removes the Cloudinary asset, then the row                    |
+| `POST`   | `/contact`                     | —      | Validated, honeypot, 3 per hour per IP                        |
+| `GET`    | `/admin/messages`              | bearer | `?page`, `?limit`, `?q` across name, email, subject, body     |
+| `GET`    | `/admin/messages/unread-count` | bearer | For the dashboard badge                                       |
+| `PATCH`  | `/admin/messages/:id/read`     | bearer | `{ read: boolean }`                                           |
+| `DELETE` | `/admin/messages/:id`          | bearer | Delete                                                        |
+| `GET`    | `/admin/stats`                 | bearer | Every dashboard count in one request                          |
+| `GET`    | `/health`                      | —      | `200` with `db: "up"`, `503` when the database is unreachable |
 
 ---
 
@@ -285,8 +285,8 @@ All captured from the running app against seeded content.
 
 ### The site
 
-| Light | Dark |
-| --- | --- |
+| Light                                                 | Dark                                                      |
+| ----------------------------------------------------- | --------------------------------------------------------- |
 | ![Home page in light mode](docs/screenshots/home.png) | ![Home page in dark mode](docs/screenshots/home-dark.png) |
 
 ![A project detail page, with markdown and syntax highlighting](docs/screenshots/project.png)
@@ -314,11 +314,11 @@ The web build reads the API to prerender pages, so the API must be running for `
 
 ## Deployment
 
-| Part | Host | Config |
-| --- | --- | --- |
-| API + Postgres | Render | `render.yaml`, built from `apps/api/Dockerfile` |
-| Site | Vercel | `apps/web/vercel.json`, root directory `apps/web` |
-| Admin | Vercel | `apps/admin/vercel.json`, root directory `apps/admin` |
+| Part           | Host   | Config                                                |
+| -------------- | ------ | ----------------------------------------------------- |
+| API + Postgres | Render | `render.yaml`, built from `apps/api/Dockerfile`       |
+| Site           | Vercel | `apps/web/vercel.json`, root directory `apps/web`     |
+| Admin          | Vercel | `apps/admin/vercel.json`, root directory `apps/admin` |
 
 Deploy the API first: the site reads from it at build time. Set `COOKIE_SAMESITE=none` in production, since the admin and API are on different domains, and give the API and the site the same `REVALIDATE_SECRET`.
 

@@ -6,6 +6,7 @@ export const serviceCreateSchema = z.object({
   description: z.string().trim().min(1, 'Description is required').max(1000),
   icon: optionalText(80),
   order: z.coerce.number().int().min(0).default(0),
+  published: z.boolean().default(true),
 })
 
 export const serviceUpdateSchema = serviceCreateSchema.partial()

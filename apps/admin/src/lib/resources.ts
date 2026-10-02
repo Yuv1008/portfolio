@@ -55,6 +55,7 @@ export const resources: Record<string, ResourceDefinition> = {
     endpoint: '/admin/skills',
     schema: skillCreateSchema,
     reorderable: true,
+    publishedKey: 'published',
     searchPlaceholder: 'Search by name or category',
     fields: [
       field({ name: 'name', label: 'Name', type: 'text', placeholder: 'TypeScript' }),
@@ -67,6 +68,12 @@ export const resources: Record<string, ResourceDefinition> = {
         help: 'A simple-icons slug, e.g. typescript',
       }),
       field({ name: 'order', label: 'Order', type: 'number', min: 0 }),
+      field({
+        name: 'published',
+        label: 'Published',
+        type: 'boolean',
+        placeholder: 'Visible on the site',
+      }),
     ],
     columns: [
       { key: 'name', header: 'Name', render: (r: Row) => text(r.name) },
@@ -83,7 +90,7 @@ export const resources: Record<string, ResourceDefinition> = {
         secondary: true,
       },
     ],
-    defaults: { name: '', category: '', level: 3, icon: '', order: 0 },
+    defaults: { name: '', category: '', level: 3, icon: '', order: 0, published: true },
   },
 
   projects: {
@@ -217,6 +224,7 @@ export const resources: Record<string, ResourceDefinition> = {
     endpoint: '/admin/experience',
     schema: experienceCreateSchema,
     reorderable: true,
+    publishedKey: 'published',
     searchPlaceholder: 'Search by company or role',
     fields: [
       field({ name: 'company', label: 'Company', type: 'text' }),
@@ -232,6 +240,12 @@ export const resources: Record<string, ResourceDefinition> = {
       field({ name: 'current', label: 'Current role', type: 'boolean', placeholder: 'Still here' }),
       field({ name: 'description', label: 'Description', type: 'markdown' }),
       field({ name: 'order', label: 'Order', type: 'number', min: 0 }),
+      field({
+        name: 'published',
+        label: 'Published',
+        type: 'boolean',
+        placeholder: 'Visible on the site',
+      }),
     ],
     columns: [
       { key: 'role', header: 'Role', render: (r: Row) => text(r.role) },
@@ -253,6 +267,7 @@ export const resources: Record<string, ResourceDefinition> = {
       current: false,
       description: '',
       order: 0,
+      published: true,
     },
   },
 
@@ -307,12 +322,19 @@ export const resources: Record<string, ResourceDefinition> = {
     endpoint: '/admin/services',
     schema: serviceCreateSchema,
     reorderable: true,
+    publishedKey: 'published',
     searchPlaceholder: 'Search by title',
     fields: [
       field({ name: 'title', label: 'Title', type: 'text' }),
       field({ name: 'description', label: 'Description', type: 'textarea' }),
       field({ name: 'icon', label: 'Icon', type: 'text', help: 'A lucide icon name, e.g. layers' }),
       field({ name: 'order', label: 'Order', type: 'number', min: 0 }),
+      field({
+        name: 'published',
+        label: 'Published',
+        type: 'boolean',
+        placeholder: 'Visible on the site',
+      }),
     ],
     columns: [
       { key: 'title', header: 'Title', render: (r: Row) => text(r.title) },
@@ -323,6 +345,6 @@ export const resources: Record<string, ResourceDefinition> = {
         secondary: true,
       },
     ],
-    defaults: { title: '', description: '', icon: '', order: 0 },
+    defaults: { title: '', description: '', icon: '', order: 0, published: true },
   },
 }

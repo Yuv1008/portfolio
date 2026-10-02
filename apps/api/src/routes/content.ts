@@ -19,8 +19,9 @@ import { createCrudRouter, type CrudConfig } from '../lib/crudFactory.js'
  * Every content type, in one place. Adding a seventh means one schema file in
  * packages/shared and one entry here — no new controller, service or route.
  *
- * Skill, Experience and Service have no `published` column in the spec's model
- * list, so they carry no publicFilter and their public lists return every row.
+ * Every resource filters public reads on `published`. Skill, Experience and
+ * Service gained that column later than the rest, defaulting to true, so no
+ * existing row changed visibility.
  */
 export const resourceConfigs: CrudConfig[] = [
   {
@@ -28,6 +29,7 @@ export const resourceConfigs: CrudConfig[] = [
     resource: 'skills',
     createSchema: skillCreateSchema,
     updateSchema: skillUpdateSchema,
+    publicFilter: { published: true },
     orderBy: [{ order: 'asc' }, { createdAt: 'asc' }],
     searchFields: ['name', 'category'],
     reorderable: true,
@@ -65,6 +67,7 @@ export const resourceConfigs: CrudConfig[] = [
     resource: 'experience',
     createSchema: experienceCreateSchema,
     updateSchema: experienceUpdateSchema,
+    publicFilter: { published: true },
     orderBy: [{ order: 'asc' }, { startDate: 'desc' }],
     searchFields: ['company', 'role'],
     reorderable: true,
@@ -86,6 +89,7 @@ export const resourceConfigs: CrudConfig[] = [
     resource: 'services',
     createSchema: serviceCreateSchema,
     updateSchema: serviceUpdateSchema,
+    publicFilter: { published: true },
     orderBy: [{ order: 'asc' }, { createdAt: 'asc' }],
     searchFields: ['title', 'description'],
     reorderable: true,
