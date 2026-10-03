@@ -9,8 +9,8 @@ let token = ''
 const auth = () => ({ Authorization: `Bearer ${token}` })
 
 const projectBody = (overrides: Record<string, unknown> = {}) => ({
-  title: 'Relay Queue',
-  slug: 'relay-queue',
+  title: 'Sample Project',
+  slug: 'sample-project',
   summary: 'A distributed job queue.',
   content: '## What it does\n\nRuns jobs.',
   techStack: ['TypeScript', 'Postgres'],
@@ -35,7 +35,7 @@ describe('admin CRUD over projects', () => {
   it('creates, reads, updates and deletes', async () => {
     const created = await request(app).post('/admin/projects').set(auth()).send(projectBody())
     expect(created.status).toBe(201)
-    expect(created.body.title).toBe('Relay Queue')
+    expect(created.body.title).toBe('Sample Project')
     expect(created.body.techStack).toEqual(['TypeScript', 'Postgres'])
     const id = created.body.id
 
@@ -46,9 +46,9 @@ describe('admin CRUD over projects', () => {
     const updated = await request(app)
       .patch(`/admin/projects/${id}`)
       .set(auth())
-      .send({ title: 'Relay Queue v2' })
+      .send({ title: 'Sample Project v2' })
     expect(updated.status).toBe(200)
-    expect(updated.body.title).toBe('Relay Queue v2')
+    expect(updated.body.title).toBe('Sample Project v2')
     // A partial update must not blank the fields it left out.
     expect(updated.body.summary).toBe('A distributed job queue.')
     expect(new Date(updated.body.updatedAt).getTime()).toBeGreaterThanOrEqual(
@@ -118,7 +118,7 @@ describe('public reads only show published rows', () => {
     const pub = await request(app).get('/projects')
     expect(pub.status).toBe(200)
     expect(pub.body).toHaveLength(1)
-    expect(pub.body[0].slug).toBe('relay-queue')
+    expect(pub.body[0].slug).toBe('sample-project')
 
     const admin = await request(app).get('/admin/projects').set(auth())
     expect(admin.body).toHaveLength(2)
@@ -126,7 +126,7 @@ describe('public reads only show published rows', () => {
 
   it('404s on a public fetch of an unpublished slug', async () => {
     expect((await request(app).get('/projects/draft')).status).toBe(404)
-    expect((await request(app).get('/projects/relay-queue')).status).toBe(200)
+    expect((await request(app).get('/projects/sample-project')).status).toBe(200)
   })
 
   it('serves a public row by id as well as by slug', async () => {
